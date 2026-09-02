@@ -1,0 +1,22 @@
+{
+  "name": "laboration-1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/isabellaluther/1DV610-L1.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/isabellaluther/1DV610-L1/issues"
+  },
+  "homepage": "https://github.com/isabellaluther/1DV610-L1#readme"
+}
