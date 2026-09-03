@@ -13,9 +13,15 @@ const inputInterface = readline.createInterface({
   output: process.stdout
 })
 
-// Prompt the user for their name and greet them
+// Prompt the user for their name
 inputInterface.question('Vad heter du? ', (userName) => {
-  console.log(`Hej ${userName}!`)
+  const trimmedUserName = userName.trim()
+
+  if (trimmedUserName === '') {
+    console.log('Du måste skriva in ett namn.')
+  } else {
+    console.log(`Hej ${trimmedUserName}!`)
+  }
 
   inputInterface.close()
 })
