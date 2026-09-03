@@ -59,6 +59,35 @@ const findNameDay = (nameDayData, userName) => {
   return null
 }
 
+/**
+ * Formats a name day date from MM-DD to a Swedish readable date.
+ *
+ * @param {string} nameDayDate - The name day date in MM-DD format.
+ * @returns {string} The formatted date.
+ */
+const formatNameDayDate = (nameDayDate) => {
+  const months = [
+    'januari',
+    'februari',
+    'mars',
+    'april',
+    'maj',
+    'juni',
+    'juli',
+    'augusti',
+    'september',
+    'oktober',
+    'november',
+    'december'
+  ]
+
+  const [month, day] = nameDayDate.split('-')
+
+  const monthName = months[Number(month) - 1]
+
+  return `${Number(day)} ${monthName}`
+}
+
 // Create a readline interface to read input from the command line.
 const inputInterface = readline.createInterface({
   input: process.stdin,
@@ -77,7 +106,17 @@ inputInterface.question('Vad heter du? ', async (userName) => {
     const nameDayData = await getNameDayData()
     const nameDayDate = findNameDay(nameDayData, trimmedUserName)
 
-    console.log(nameDayDate)
+    if (nameDayDate) {
+    const formattedNameDayDate = formatNameDayDate(nameDayDate)
+
+    console.log(
+      `${trimmedUserName} har namnsdag den ${formattedNameDayDate}.`
+    )
+  } else {
+    console.log(
+      `Kunde inte hitta någon svensk namnsdag för ${trimmedUserName}.`
+    )
+  }
   }
 
   inputInterface.close()
