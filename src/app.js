@@ -12,6 +12,7 @@ import readline from 'node:readline'
  * Fetches Swedish calendar data for the current year.
  *
  * @returns {Promise<object>} The calendar data returned by the API.
+ * @throws {Error} If the API request fails.
  */
 const getNameDayData = async () => {
   const currentYear = new Date().getFullYear()
@@ -19,6 +20,10 @@ const getNameDayData = async () => {
   const response = await fetch(
     `https://sholiday.faboul.se/dagar/v2.1/${currentYear}`
   )
+
+  if (!response.ok) {
+    throw new Error(`API request failed with status ${response.status}`)
+  }
 
   const nameDayData = await response.json()
 
@@ -92,19 +97,23 @@ inputInterface.question('Vad heter du? ', async (userName) => {
   } else {
     console.log(`Hej ${trimmedUserName}!`)
 
-    const nameDayData = await getNameDayData()
-    const nameDayDate = findNameDay(nameDayData, trimmedUserName)
+    try {
+      const nameDayData = await getNameDayData()
+      const nameDayDate = findNameDay(nameDayData, trimmedUserName)
 
-    if (nameDayDate) {
-      const formattedNameDayDate = formatNameDayDate(nameDayDate)
+      if (nameDayDate) {
+        const formattedNameDayDate = formatNameDayDate(nameDayDate)
 
-      console.log(
-        `Du har namnsdag den ${formattedNameDayDate}.`
-      )
-    } else {
-      console.log(
-        `Kunde inte hitta ${trimmedUserName} i namnsdagslistan.`
-      )
+        console.log(
+          `Du har namnsdag den ${formattedNameDayDate}.`
+        )
+      } else {
+        console.log(
+          `Kunde inte hitta ${trimmedUserName} i namnsdagslistan.`
+        )
+      }
+    } catch (error) {
+      console.log('Kunde inte hämta namnsdagsinformationen just nu.')
     }
   }
 
