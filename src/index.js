@@ -1,7 +1,6 @@
 /**
- * @file src/app.js
- * @description This file contains the main application logic for a simple
- * command-line interface that prompts the user for their name and greets them.
+ * @file src/index.js
+ * @description This script fetches Swedish name day data from an API and allows the user to input their name to find out when their name day is celebrated. It uses the `readline` module for user interaction and handles API requests and responses.
  * @author Isabella Luther <il223at@student.lnu.se>
  * @license MIT
  */
