@@ -9,29 +9,18 @@
 import readline from 'node:readline'
 
 /**
- * Fetches and parses the Swedish name day data.
+ * Fetches Swedish calendar data for the current year.
  *
- * @returns {Promise<object>} The parsed name day data.
+ * @returns {Promise<object>} The calendar data returned by the API.
  */
 const getNameDayData = async () => {
-  // Fetch the JavaScript file containing the Swedish name day data.
-  const response = await fetch('https://workgroup.se/namnsdagar.js')
+  const currentYear = new Date().getFullYear()
 
-  // Read the response as plain text.
-  const responseText = await response.text()
+  const response = await fetch(
+    `https://sholiday.faboul.se/dagar/v2.1/${currentYear}`
+  )
 
-  // Find where the name day object starts and ends.
-  const objectStart = responseText.indexOf('{')
-  const objectEnd = responseText.lastIndexOf('}') + 1
-
-  // Extract only the object from the JavaScript file.
-  const nameDayDataText = responseText.slice(objectStart, objectEnd)
-
-  // Remove JavaScript line comments because JSON does not allow comments.
-  const nameDayDataWithoutComments = nameDayDataText.replace(/\/\/.*$/gm, '')
-
-  // Convert the cleaned JSON text into a JavaScript object.
-  const nameDayData = JSON.parse(nameDayDataWithoutComments)
+  const nameDayData = await response.json()
 
   return nameDayData
 }
@@ -39,20 +28,20 @@ const getNameDayData = async () => {
 /**
  * Searches the name day data for a specific name.
  *
- * @param {object} nameDayData - The parsed name day data.
+ * @param {object} nameDayData - The calendar data returned by the API.
  * @param {string} userName - The name to search for.
  * @returns {string|null} The date of the name day, or null if no match is found.
  */
 const findNameDay = (nameDayData, userName) => {
   const normalizedUserName = userName.toLowerCase()
 
-  for (const [date, names] of Object.entries(nameDayData)) {
-    const matchingName = names.find(
+  for (const day of nameDayData.dagar) {
+    const matchingName = day.namnsdag.find(
       (name) => name.toLowerCase() === normalizedUserName
     )
 
     if (matchingName) {
-      return date
+      return day.datum
     }
   }
 
@@ -60,9 +49,9 @@ const findNameDay = (nameDayData, userName) => {
 }
 
 /**
- * Formats a name day date from MM-DD to a Swedish readable date.
+ * Formats a name day date from YYYY-MM-DD to a Swedish readable date.
  *
- * @param {string} nameDayDate - The name day date in MM-DD format.
+ * @param {string} nameDayDate - The name day date in YYYY-MM-DD format.
  * @returns {string} The formatted date.
  */
 const formatNameDayDate = (nameDayDate) => {
@@ -81,20 +70,20 @@ const formatNameDayDate = (nameDayDate) => {
     'december'
   ]
 
-  const [month, day] = nameDayDate.split('-')
+  const [, month, day] = nameDayDate.split('-')
 
   const monthName = months[Number(month) - 1]
 
   return `${Number(day)} ${monthName}`
 }
 
-// Create a readline interface to read input from the command line.
+// Create a readline interface for user input and output.
 const inputInterface = readline.createInterface({
   input: process.stdin,
   output: process.stdout
 })
 
-// Prompt the user for their name.
+// Prompt the user for their name and handle the response.
 inputInterface.question('Vad heter du? ', async (userName) => {
   const trimmedUserName = userName.trim()
 
@@ -107,16 +96,16 @@ inputInterface.question('Vad heter du? ', async (userName) => {
     const nameDayDate = findNameDay(nameDayData, trimmedUserName)
 
     if (nameDayDate) {
-    const formattedNameDayDate = formatNameDayDate(nameDayDate)
+      const formattedNameDayDate = formatNameDayDate(nameDayDate)
 
-    console.log(
-      `${trimmedUserName} har namnsdag den ${formattedNameDayDate}.`
-    )
-  } else {
-    console.log(
-      `Kunde inte hitta någon svensk namnsdag för ${trimmedUserName}.`
-    )
-  }
+      console.log(
+        `Du har namnsdag den ${formattedNameDayDate}.`
+      )
+    } else {
+      console.log(
+        `Kunde inte hitta ${trimmedUserName} i namnsdagslistan.`
+      )
+    }
   }
 
   inputInterface.close()
