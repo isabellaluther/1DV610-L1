@@ -74,4 +74,6 @@ Ett exempel var när programmet gav felet `Unexpected token '<'` när jag förs�
 
 Svar:
 
-[Länk till samma skärmdump/video i Zulip]
+![Screenshot of the application](images/demo.png)
+
+[Se min skärmdump/video i Zulip](https://zulip.lnu.se/#narrow/channel/19-1dv610/topic/HT26.20-.20Laboration.201.20-.20Visa.20och.20ber.C3.A4tta/near/8434)
